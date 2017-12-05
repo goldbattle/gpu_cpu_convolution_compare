@@ -26,8 +26,15 @@ using namespace std;
  */
 int main(int argc, const char* argv[]) {
 
+    // Check to make sure we get an matrix size
+    if(argc < 2) {
+        cerr << "Please specify a size of the image matrix" << endl;
+        cerr << "./conv_cuda <imgsize>" << endl;
+        return EXIT_FAILURE;
+    }
+
     // Size of our matrix and kernals
-    const int imgSize = 2000;
+    const int imgSize = std::atoi(argv[1]);
     const int kernelSize = 10;
 
     // Allocate variables on stack
@@ -36,8 +43,12 @@ int main(int argc, const char* argv[]) {
     double* kernel = new double[kernelSize*kernelSize];    
 
     // Total time
-    int loopCt = 10;
+    int loopCt = 25;
     double sumTime = 0.0;
+    double sumTimeCopy1 = 0.0;
+    double sumTimeKernel = 0.0;
+    double sumTimeCopy2 = 0.0;
+    double sumTimeFree = 0.0;
     double* times = new double[loopCt];
 
     // Startup the GPU device
@@ -133,16 +144,20 @@ int main(int argc, const char* argv[]) {
         // Store our results
         times[i] = runTime;
         sumTime += runTime;
-        std::cout << "loop #" << i << " = " << runTime << " with " << imgOut[10] << " "  << imgOut[1000] << std::endl;
-        std::cout << "\tmalloc: " << std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count() << std::endl;
-        std::cout << "\tcopy: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << std::endl;
-        std::cout << "\tkernel: " << std::chrono::duration_cast<std::chrono::milliseconds>(t3 - t2).count() << std::endl;
-        std::cout << "\tcopy: " << std::chrono::duration_cast<std::chrono::milliseconds>(t4 - t3).count() << std::endl;
-        std::cout << "\tfree: " << std::chrono::duration_cast<std::chrono::milliseconds>(t5 - t4).count() << std::endl;
+        sumTimeCopy1 += std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
+        sumTimeKernel += std::chrono::duration_cast<std::chrono::milliseconds>(t3 - t2).count();
+        sumTimeCopy2 += std::chrono::duration_cast<std::chrono::milliseconds>(t4 - t3).count();
+        sumTimeFree += std::chrono::duration_cast<std::chrono::milliseconds>(t5 - t4).count();
+        // std::cout << "loop #" << i << " = " << runTime << " with " << imgOut[10] << " "  << imgOut[1000] << std::endl;
+        // std::cout << "\tmalloc: " << std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count() << std::endl;
+        // std::cout << "\tcopy: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << std::endl;
+        // std::cout << "\tkernel: " << std::chrono::duration_cast<std::chrono::milliseconds>(t3 - t2).count() << std::endl;
+        // std::cout << "\tcopy: " << std::chrono::duration_cast<std::chrono::milliseconds>(t4 - t3).count() << std::endl;
+        // std::cout << "\tfree: " << std::chrono::duration_cast<std::chrono::milliseconds>(t5 - t4).count() << std::endl;
     }
 
     // Print average
-    std::cout << std::fixed << std::setprecision(2) << sumTime/loopCt << " ms average" << std::endl;
+    std::cout << std::fixed << std::setprecision(5) << sumTime/loopCt << " ms average" << std::endl;
 
     // Calculate the std deviation
     double var = 0;
@@ -151,7 +166,13 @@ int main(int argc, const char* argv[]) {
     }
     var /= loopCt;
     double deviation = std::sqrt(var);
-    std::cout << std::fixed << std::setprecision(2) << deviation << " sigma deviation"  << std::endl;
+    std::cout << std::fixed << std::setprecision(5) << deviation << " sigma deviation"  << std::endl;
+
+    // Extra times for GPU computing
+    std::cout << "\t" << std::fixed << std::setprecision(5) << sumTimeCopy1/loopCt << " ms average (copy1)" << std::endl;
+    std::cout << "\t" << std::fixed << std::setprecision(5) << sumTimeKernel/loopCt << " ms average (kernel)" << std::endl;
+    std::cout << "\t" << std::fixed << std::setprecision(5) << sumTimeCopy2/loopCt << " ms average (copy2)" << std::endl;
+    std::cout << "\t" << std::fixed << std::setprecision(5) << sumTimeFree/loopCt << " ms average (free)" << std::endl;
 
 }
 

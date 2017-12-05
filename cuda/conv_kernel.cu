@@ -39,6 +39,10 @@ void perform_convolution(double *kernel, int kRows, int kCols,
     int i = blockIdx.x*blockDim.x + threadIdx.x;
     int j = blockIdx.y*blockDim.y + threadIdx.y;
 
+    // Return if we are out of bounds
+    if(i > rows || j > cols)
+        return;
+
     // Temp variable to store the sum in
     int tempout = i*rows + j;
     double temp = 0.0;

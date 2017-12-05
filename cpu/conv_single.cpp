@@ -5,6 +5,8 @@
 #include <cmath>
 
 
+using namespace std;
+
 /**
  * Will perform a convolution on the input image
  * Original code from here:
@@ -68,8 +70,15 @@ void perform_convolution(double *kernel, int kRows, int kCols,
  */
 int main(int argc, const char* argv[]) {
 
+    // Check to make sure we get an matrix size
+    if(argc < 2) {
+        cerr << "Please specify a size of the image matrix" << endl;
+        cerr << "./conv_single <imgsize>" << endl;
+        return EXIT_FAILURE;
+    }
+
     // Size of our matrix and kernals
-    const int imgSize = 2000;
+    const int imgSize = std::atoi(argv[1]);
     const int kernelSize = 10;
 
     // Allocate variables on stack
@@ -78,7 +87,7 @@ int main(int argc, const char* argv[]) {
     double* kernel = new double[kernelSize*kernelSize];    
 
     // Total time
-    int loopCt = 20;
+    int loopCt = 25;
     double sumTime = 0.0;
     double* times = new double[loopCt];
 
@@ -109,11 +118,11 @@ int main(int argc, const char* argv[]) {
         // Store our results
         times[i] = runTime;
         sumTime += runTime;
-        std::cout << "loop #" << i << " = " << runTime << " with " << imgOut[imgSize*imgSize/2] << std::endl;
+        //std::cout << "loop #" << i << " = " << runTime << " with " << imgOut[imgSize*imgSize/2] << std::endl;
     }
 
     // Print average
-    std::cout << std::fixed << std::setprecision(2) << sumTime/loopCt << " ms average" << std::endl;
+    std::cout << std::fixed << std::setprecision(4) << sumTime/loopCt << " ms average" << std::endl;
 
     // Calculate the std deviation
     double var = 0;
@@ -122,7 +131,7 @@ int main(int argc, const char* argv[]) {
     }
     var /= loopCt;
     double deviation = std::sqrt(var);
-    std::cout << std::fixed << std::setprecision(2) << deviation << " sigma deviation"  << std::endl;
+    std::cout << std::fixed << std::setprecision(4) << deviation << " sigma deviation"  << std::endl;
 
 }
 

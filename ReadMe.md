@@ -7,7 +7,7 @@ https://software.intel.com/sites/landingpage/IntrinsicsGuide/#techs=SSE2&expand=
 
 
 
-### Processor Number 1
+### Processor Number 1 (`cat /proc/cpuinfo`)
 ```
 processor	: 0
 vendor_id	: GenuineIntel
@@ -16,8 +16,8 @@ model		: 158
 model name	: Intel(R) Xeon(R) CPU E3-1505M v6 @ 3.00GHz
 stepping	: 9
 microcode	: 0x5e
-cpu MHz		: 806.213
-cache size	: 8192 KB
+cpu MHz     : 3911.132
+cache size  : 8192 KB
 physical id	: 0
 siblings	: 8
 core id		: 0
@@ -38,7 +38,7 @@ power management:
 ```
 
 
-### GPU Number 1
+### GPU Number 1 (`nvidia-smi -i 0 -q`)
 ```
 Timestamp                           : Tue Dec  5 12:42:15 2017
 Driver Version                      : 384.90
