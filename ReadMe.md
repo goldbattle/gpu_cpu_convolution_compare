@@ -1,9 +1,8 @@
+## GPU CPU Convolution Compare
 
 
-
-To check for SSE2 support use `cat /proc/cpuinfo` and look in the "flags" section for SSE2.
-
-https://software.intel.com/sites/landingpage/IntrinsicsGuide/#techs=SSE2&expand=115,5192,5195
+This repo was for a class project which looked at how a convolution of an image can perform differently on different architectures.
+The main goal was to compare how the architectures effected the final performance.
 
 
 
@@ -38,95 +37,115 @@ power management:
 ```
 
 
-### GPU Number 1 (`nvidia-smi -i 0 -q`)
+### GPU Number 1 (`cd /usr/local/cuda/samples/1_Utilities/deviceQuery; sudo make; ./deviceQuery`)
 ```
-Timestamp                           : Tue Dec  5 12:42:15 2017
-Driver Version                      : 384.90
 
-Attached GPUs                       : 1
-GPU 00000000:01:00.0
-    Product Name                    : Quadro M2200
-    Product Brand                   : Quadro
-    Display Mode                    : Enabled
-    Display Active                  : Enabled
-    Persistence Mode                : Disabled
-    Accounting Mode                 : Disabled
-    Accounting Mode Buffer Size     : 1920
-    Driver Model
-        Current                     : N/A
-        Pending                     : N/A
-    Serial Number                   : N/A
-    GPU UUID                        : GPU-97b43966-7dfb-6389-02cf-8a71c943bb0d
-    Minor Number                    : 0
-    VBIOS Version                   : 84.06.76.00.15
-    MultiGPU Board                  : No
-    Board ID                        : 0x100
-    GPU Part Number                 : N/A
-    PCI
-        Bus                         : 0x01
-        Device                      : 0x00
-        Domain                      : 0x0000
-        Device Id                   : 0x143610DE
-        Bus Id                      : 00000000:01:00.0
-        Sub System Id               : 0x225117AA
-        GPU Link Info
-            PCIe Generation
-                Max                 : 3
-                Current             : 1
-            Link Width
-                Max                 : 16x
-                Current             : 16x
-        Bridge Chip
-            Type                    : N/A
-            Firmware                : N/A
-        Replays since reset         : 0
-        Tx Throughput               : 3000 KB/s
-        Rx Throughput               : 1000 KB/s
-    Fan Speed                       : N/A
-    Performance State               : P8
-    FB Memory Usage
-        Total                       : 4029 MiB
-        Used                        : 503 MiB
-        Free                        : 3526 MiB
-    BAR1 Memory Usage
-        Total                       : 256 MiB
-        Used                        : 14 MiB
-        Free                        : 242 MiB
-    Compute Mode                    : Default
-    Utilization
-        Gpu                         : 29 %
-        Memory                      : 11 %
-        Encoder                     : 0 %
-        Decoder                     : 0 %
-    Encoder Stats
-        Active Sessions             : 0
-        Average FPS                 : 0
-        Average Latency             : 0
-    Temperature
-        GPU Current Temp            : 39 C
-        GPU Shutdown Temp           : 0 C
-        GPU Slowdown Temp           : 96 C
-        GPU Max Operating Temp      : 101 C
-        Memory Current Temp         : N/A
-        Memory Max Operating Temp   : N/A
-    Clocks
-        Graphics                    : 135 MHz
-        SM                          : 135 MHz
-        Memory                      : 405 MHz
-        Video                       : 405 MHz
-    Applications Clocks
-        Graphics                    : 696 MHz
-        Memory                      : 2754 MHz
-    Default Applications Clocks
-        Graphics                    : 694 MHz
-        Memory                      : 2754 MHz
-    Max Clocks
-        Graphics                    : 1038 MHz
-        SM                          : 1038 MHz
-        Memory                      : 2754 MHz
-        Video                       : 851 MHz
 ```
 
 
+### Processor Number 2 (`cat /proc/cpuinfo`)
+```
+processor    : 7
+vendor_id    : AuthenticAMD
+cpu family    : 21
+model        : 1
+model name    : AMD FX(tm)-8120 Eight-Core Processor
+stepping    : 2
+microcode    : 0x600063d
+cpu MHz        : 1400.000
+cache size    : 2048 KB
+physical id    : 0
+siblings    : 8
+core id        : 2
+cpu cores    : 4
+apicid        : 7
+initial apicid    : 2
+fpu        : yes
+fpu_exception    : yes
+cpuid level    : 13
+wp        : yes
+flags        : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl nonstop_tsc extd_apicid aperfmperf pni pclmulqdq monitor ssse3 cx16 sse4_1 sse4_2 popcnt aes xsave avx lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs xop skinit wdt lwp fma4 nodeid_msr topoext perfctr_core perfctr_nb cpb hw_pstate vmmcall arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold
+bugs        : fxsave_leak sysret_ss_attrs
+bogomips    : 6241.59
+TLB size    : 1536 4K pages
+clflush size    : 64
+cache_alignment    : 64
+address sizes    : 48 bits physical, 48 bits virtual
+power management: ts ttp tm 100mhzsteps hwpstate cpb\
+```
+
+
+### GPU Number 3 (`cd /usr/local/cuda/samples/1_Utilities/deviceQuery; sudo make; ./deviceQuery`)
+```
+Device 0: "GeForce GTX 970"
+  CUDA Driver Version / Runtime Version          9.0 / 8.0
+  CUDA Capability Major/Minor version number:    5.2
+  Total amount of global memory:                 4037 MBytes (4233101312 bytes)
+  (13) Multiprocessors, (128) CUDA Cores/MP:     1664 CUDA Cores
+  GPU Max Clock rate:                            1329 MHz (1.33 GHz)
+  Memory Clock rate:                             3505 Mhz
+  Memory Bus Width:                              256-bit
+  L2 Cache Size:                                 1835008 bytes
+  Maximum Texture Dimension Size (x,y,z)         1D=(65536), 2D=(65536, 65536), 3D=(4096, 4096, 4096)
+  Maximum Layered 1D Texture Size, (num) layers  1D=(16384), 2048 layers
+  Maximum Layered 2D Texture Size, (num) layers  2D=(16384, 16384), 2048 layers
+  Total amount of constant memory:               65536 bytes
+  Total amount of shared memory per block:       49152 bytes
+  Total number of registers available per block: 65536
+  Warp size:                                     32
+  Maximum number of threads per multiprocessor:  2048
+  Maximum number of threads per block:           1024
+  Max dimension size of a thread block (x,y,z): (1024, 1024, 64)
+  Max dimension size of a grid size    (x,y,z): (2147483647, 65535, 65535)
+  Maximum memory pitch:                          2147483647 bytes
+  Texture alignment:                             512 bytes
+  Concurrent copy and kernel execution:          Yes with 2 copy engine(s)
+  Run time limit on kernels:                     Yes
+  Integrated GPU sharing Host Memory:            No
+  Support host page-locked memory mapping:       Yes
+  Alignment requirement for Surfaces:            Yes
+  Device has ECC support:                        Disabled
+  Device supports Unified Addressing (UVA):      Yes
+  Device PCI Domain ID / Bus ID / location ID:   0 / 1 / 0
+```
+
+
+### Processor Number 3 (`cat /proc/cpuinfo`)
+```
+processor    : 11
+vendor_id    : GenuineIntel
+cpu family    : 6
+model        : 85
+model name    : Intel(R) Core(TM) i7-7800X CPU @ 3.50GHz
+stepping    : 4
+microcode    : 0x2000023
+cpu MHz        : 1810.156
+cache size    : 8448 KB
+physical id    : 0
+siblings    : 12
+core id        : 5
+cpu cores    : 6
+apicid        : 11
+initial apicid    : 11
+fpu        : yes
+fpu_exception    : yes
+cpuid level    : 22
+wp        : yes
+flags        : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm cqm mpx avx512f rdseed adx smap clflushopt clwb avx512cd xsaveopt xsavec xgetbv1 cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req
+bugs        :
+bogomips    : 7008.02
+clflush size    : 64
+cache_alignment    : 64
+address sizes    : 46 bits physical, 48 bits virtual
+power management:
+```
+
+
+
+
+### GPU Number 3 (`cd /usr/local/cuda/samples/1_Utilities/deviceQuery; sudo make; ./deviceQuery`)
+```
+
+```
 
 
