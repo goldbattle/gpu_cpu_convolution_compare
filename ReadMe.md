@@ -3,6 +3,7 @@
 
 This repo was for a class project which looked at how a convolution of an image can perform differently on different architectures.
 The main goal was to compare how the architectures effected the final performance.
+Note that you will need CUDA installed from the nvidia website and also OpenMP to run the OpenMP examples (`sudo apt install libomp-dev` on ubuntu).
 
 
 
