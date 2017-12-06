@@ -63,7 +63,7 @@ void perform_convolution(double *kernel, int kRows, int kCols,
             // ignore input samples which are out of bound
             if( ii >= 0 && ii < rows && jj >= 0 && jj < cols ) {
                 // calculate 2d => 1d mapping
-                int tempin = ii*rows + j;
+                int tempin = ii*rows + jj;
                 int tempkerneel = mm*kRows + nn;
                 // multiple it times our kernel
                 temp += in[tempin] * skernel[tempkerneel];

@@ -47,7 +47,7 @@ void perform_convolution(double *kernel, int kRows, int kCols,
                 	if( ii >= 0 && ii < rows && jj+1 >= 0 && jj+1 < cols && nn+1 < kCols) {
 	                    // calculate 2d => 1d mapping
 	                    int tempout = i*rows + j;
-	                    int tempin = ii*rows + j;
+	                    int tempin = ii*rows + jj;
 	                    int tempkerneel = mm*kRows + nn;
 	                	// Load the next two doubles from both lists
 	                    __m128d va = _mm_load_pd(&in[tempin]);
